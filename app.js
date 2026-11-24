@@ -131,6 +131,24 @@ document.getElementById("toggle-technical").addEventListener("click", (event) =>
 const evidenceDialog = document.getElementById("evidence-dialog");
 const evidenceTitle = document.getElementById("evidence-dialog-title");
 const evidenceContent = document.getElementById("evidence-content");
+
+// Los cierres son botones normales y no envíos de formulario. Esto evita que
+// la validación de campos obligatorios impida cancelar una decisión.
+document.querySelectorAll("[data-dialog-close]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const dialog = button.closest("dialog");
+    if (dialog?.open) dialog.close("cancel");
+  });
+});
+
+// El elemento <dialog> conserva el cierre nativo con Escape. Además, un clic
+// directo sobre el fondo modal permite salir sin ejecutar ninguna acción.
+document.querySelectorAll("dialog").forEach((dialog) => {
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog && dialog.open) dialog.close("cancel");
+  });
+});
+
 const evidenceData = {
   events: ["18 eventos relacionados", "Ventana: 10:42:18–10:47:18. Acción: deny. Puerto destino: 22. Fuente: FortiGate-01."],
   event: ["Evento EVT-7F32A9", "10:42:18 · 10.0.1.24:55120 → 172.16.0.8:22 · TCP · deny · 1.240 bytes enviados."],
