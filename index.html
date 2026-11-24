@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Prototipo académico navegable de SDATR para la Tarea 4 de Fundamentos de Interacción Humano-Computador.">
+  <title>SDATR · Prototipo XAI y RAG</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+  <header class="topbar">
+    <div class="brand" aria-label="SDATR, Sistema de Detección de Anomalías en Tráfico de Red">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <span>SDATR</span>
+    </div>
+    <div class="topbar-context">
+      <strong>Prototipo académico</strong>
+      <span>Interacción · XAI · RAG</span>
+    </div>
+    <div class="topbar-actions" aria-label="Preferencias de visualización">
+      <button class="utility-button" id="density-toggle" type="button" aria-pressed="false">Vista cómoda</button>
+      <button class="utility-button" id="font-toggle" type="button" aria-pressed="false">Texto grande</button>
+      <button class="utility-button" id="contrast-toggle" type="button" aria-pressed="false">Alto contraste</button>
+      <span class="user-chip"><span aria-hidden="true">OP</span> Analista</span>
+    </div>
+  </header>
+
+  <div class="prototype-banner" role="note">
+    <strong>Demostración sin API:</strong> datos ficticios, acciones simuladas y sin conexión a infraestructura real.
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navegación del prototipo">
+      <p class="sidebar-label">Recorrido de la entrega</p>
+      <nav>
+        <a class="nav-link" href="#alerts" data-route="alerts">
+          <span class="nav-icon" aria-hidden="true">!</span>
+          <span>Bandeja inteligente</span>
+          <span class="count-badge" aria-label="12 alertas">12</span>
+        </a>
+        <a class="nav-link" href="#alert-detail" data-route="alert-detail">
+          <span class="nav-icon" aria-hidden="true">?</span>
+          <span>Detalle y XAI</span>
+        </a>
+        <a class="nav-link" href="#rag" data-route="rag">
+          <span class="nav-icon" aria-hidden="true">⌕</span>
+          <span>Consulta RAG</span>
+        </a>
+        <a class="nav-link" href="#governance" data-route="governance">
+          <span class="nav-icon" aria-hidden="true">✓</span>
+          <span>Gobernanza</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-help">
+        <strong>Ayuda del recorrido</strong>
+        <p>Use el menú o las teclas Tab y Enter. Las decisiones sensibles siempre requieren una persona.</p>
+      </div>
+    </aside>
+
+    <main id="main-content" class="main-content">
+      <section class="view" data-view="alerts" aria-labelledby="alerts-title">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Operación / priorización</p>
+            <h1 id="alerts-title" tabindex="-1">Bandeja inteligente de alertas</h1>
+            <p>La IA propone un orden explicable. El analista conserva el orden base, los filtros y la decisión final.</p>
+          </div>
+          <div class="ai-suggestion">
+            <span class="ai-label">IA</span>
+            <span>Priorización sugerida</span>
+            <button class="text-button" id="why-order" type="button">Ver motivo</button>
+            <button class="text-button" id="restore-order" type="button">Restablecer</button>
+          </div>
+        </div>
+
+        <div class="summary-grid" aria-label="Resumen de alertas">
+          <article class="summary-card summary-critical">
+            <span>Críticas abiertas</span>
+            <strong>3</strong>
+            <small>Revisión prioritaria</small>
+          </article>
+          <article class="summary-card summary-progress">
+            <span>En investigación</span>
+            <strong>7</strong>
+            <small>2 requieren apoyo</small>
+          </article>
+          <article class="summary-card summary-ready">
+            <span>Con evidencia completa</span>
+            <strong>9</strong>
+            <small>De 12 alertas</small>
+          </article>
+          <article class="summary-card summary-neutral">
+            <span>Sin responsable</span>
+            <strong>4</strong>
+            <small>Asignación humana</small>
+          </article>
+        </div>
+
+        <form class="filter-bar" id="alert-filters">
+          <label>
+            <span>Estado</span>
+            <select id="status-filter">
+              <option value="all">Todos</option>
+              <option value="open">Abierta</option>
+              <option value="in_progress">En investigación</option>
+            </select>
+          </label>
+          <label>
+            <span>Severidad</span>
+            <select id="severity-filter">
+              <option value="all">Todas</option>
+              <option value="critical">Crítica</option>
+              <option value="high">Alta</option>
+              <option value="medium">Media</option>
+            </select>
+          </label>
+          <label class="search-field">
+            <span>ID, regla o fuente</span>
+            <input id="alert-search" type="search" placeholder="Buscar..." autocomplete="off">
+          </label>
+          <button class="primary-button" type="submit">Aplicar filtros</button>
+        </form>
+
+        <div class="alerts-layout">
+          <div class="table-panel">
+            <div class="panel-heading">
+              <h2>Cola de trabajo</h2>
+              <span id="result-count" aria-live="polite">4 resultados</span>
+            </div>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Riesgo</th>
+                    <th scope="col">Severidad</th>
+                    <th scope="col">Motivo principal</th>
+                    <th scope="col">Responsable</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col"><span class="sr-only">Acción</span></th>
+                  </tr>
+                </thead>
+                <tbody id="alert-table-body">
+                  <tr class="alert-row is-priority" data-severity="critical" data-status="open" data-search="ALT-1048 R-SSH-005 FortiGate-01">
+                    <td><strong>ALT-1048</strong></td>
+                    <td><strong>87/100</strong></td>
+                    <td><span class="severity severity-critical"><span aria-hidden="true">!</span> Crítica</span></td>
+                    <td>SSH denegado + anomalía</td>
+                    <td>Sin asignar</td>
+                    <td><span class="status">Abierta</span></td>
+                    <td><a class="row-action" href="#alert-detail">Investigar</a></td>
+                  </tr>
+                  <tr class="alert-row" data-severity="high" data-status="in_progress" data-search="ALT-1047 R-SCAN-002 FortiGate-02">
+                    <td><strong>ALT-1047</strong></td>
+                    <td>73/100</td>
+                    <td><span class="severity severity-high"><span aria-hidden="true">▲</span> Alta</span></td>
+                    <td>Escaneo de puertos</td>
+                    <td>Ana C.</td>
+                    <td><span class="status">En investigación</span></td>
+                    <td><button class="row-action select-alert" type="button">Revisar</button></td>
+                  </tr>
+                  <tr class="alert-row" data-severity="medium" data-status="open" data-search="ALT-1046 HIGH_TRAFFIC_VOLUME Lote-0027">
+                    <td><strong>ALT-1046</strong></td>
+                    <td>51/100</td>
+                    <td><span class="severity severity-medium"><span aria-hidden="true">◆</span> Media</span></td>
+                    <td>Volumen de tráfico inusual</td>
+                    <td>Luis M.</td>
+                    <td><span class="status">Abierta</span></td>
+                    <td><button class="row-action select-alert" type="button">Revisar</button></td>
+                  </tr>
+                  <tr class="alert-row" data-severity="medium" data-status="open" data-search="ALT-1045 REPEATED_DENY FortiGate-01">
+                    <td><strong>ALT-1045</strong></td>
+                    <td>48/100</td>
+                    <td><span class="severity severity-medium"><span aria-hidden="true">◆</span> Media</span></td>
+                    <td>Denegaciones repetidas</td>
+                    <td>Sin asignar</td>
+                    <td><span class="status">Abierta</span></td>
+                    <td><button class="row-action select-alert" type="button">Revisar</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <aside class="explanation-panel" id="order-explanation" aria-labelledby="order-title">
+            <span class="ai-label">IA</span>
+            <h2 id="order-title">¿Por qué aparece primero?</h2>
+            <ul>
+              <li>Coincide con una regla crítica activa.</li>
+              <li>Isolation Forest: anomalía 0,92.</li>
+              <li>XGBoost: fuerza bruta, 88 %.</li>
+              <li>18 eventos relacionados en cinco minutos.</li>
+            </ul>
+            <p class="limit-note">Es una sugerencia de prioridad, no una decisión automática.</p>
+          </aside>
+        </div>
+
+        <div class="accessibility-note">
+          <strong>Diseño inclusivo:</strong> severidad con texto, símbolo y color; foco visible; controles amplios; filtros persistentes y orden base recuperable.
+        </div>
+      </section>
+
+      <section class="view" data-view="alert-detail" aria-labelledby="detail-title" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Alertas / ALT-1048</p>
+            <h1 id="detail-title" tabindex="-1">Detalle de alerta e investigación</h1>
+            <p>Explicación progresiva desde el resumen hasta los eventos originales.</p>
+          </div>
+          <div class="detail-badges">
+            <span class="risk-badge">Riesgo 87/100</span>
+            <span class="severity severity-critical"><span aria-hidden="true">!</span> Crítica</span>
+            <span class="status">Abierta</span>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <article class="panel signal-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="ai-label">IA</span>
+                <h2>¿Por qué se generó?</h2>
+              </div>
+              <button class="text-button" id="toggle-technical" type="button" aria-expanded="false">Ver detalle técnico</button>
+            </div>
+
+            <div class="signal-grid">
+              <article class="signal-card signal-rule">
+                <span>Regla determinística</span>
+                <strong>R-SSH-005 v3</strong>
+                <p>18 denegaciones SSH en cinco minutos.</p>
+                <small>Contribución: alta</small>
+              </article>
+              <article class="signal-card signal-iforest">
+                <span>Isolation Forest</span>
+                <strong>Anomalía 0,92</strong>
+                <p>Frecuencia y puerto fuera del patrón habitual.</p>
+                <small>Contribución: alta</small>
+              </article>
+              <article class="signal-card signal-xgboost">
+                <span>XGBoost</span>
+                <strong>Fuerza bruta 88 %</strong>
+                <p>Clase conocida más probable.</p>
+                <small>Contribución: media</small>
+              </article>
+            </div>
+
+            <div class="technical-detail" id="technical-detail" hidden>
+              <h3>Detalle técnico</h3>
+              <dl>
+                <div><dt>Ventana</dt><dd>5 minutos</dd></div>
+                <div><dt>Umbral de regla</dt><dd>15 eventos</dd></div>
+                <div><dt>Modelo IF</dt><dd>iforest-v4</dd></div>
+                <div><dt>Modelo XGB</dt><dd>xgb-v3</dd></div>
+              </dl>
+            </div>
+
+            <div class="uncertainty-callout">
+              <strong>Límite de la explicación</strong>
+              <p>El puntaje apoya la priorización, pero no demuestra por sí solo que exista un ataque. La revisión humana sigue siendo obligatoria.</p>
+            </div>
+          </article>
+
+          <aside class="panel evidence-panel" aria-labelledby="evidence-title">
+            <div class="panel-heading">
+              <h2 id="evidence-title">Evidencias navegables</h2>
+              <span>4 fuentes</span>
+            </div>
+            <ol class="evidence-list">
+              <li><button type="button" data-evidence="events">18 eventos relacionados <span>Abrir</span></button></li>
+              <li><button type="button" data-evidence="ip">IP 10.0.1.24 <span>Ver historial</span></button></li>
+              <li><button type="button" data-evidence="port">Puerto 22 · SSH <span>Ver dato</span></button></li>
+              <li><button type="button" data-evidence="rule">R-SSH-005 v3 <span>Consultar regla</span></button></li>
+            </ol>
+            <dl class="evidence-meta">
+              <div><dt>Primera detección</dt><dd>10:42:18</dd></div>
+              <div><dt>Fuente</dt><dd>FortiGate-01</dd></div>
+              <div><dt>Datos incompletos</dt><dd>No</dd></div>
+            </dl>
+          </aside>
+        </div>
+
+        <section class="panel decision-panel" aria-labelledby="decision-title">
+          <div class="panel-heading">
+            <div>
+              <h2 id="decision-title">Decisión del analista</h2>
+              <p>La salida original se conserva para auditoría.</p>
+            </div>
+            <span class="human-label">Responsabilidad humana</span>
+          </div>
+          <div class="decision-actions">
+            <button class="primary-button action-button" type="button" data-action="Confirmar verdadero positivo">Confirmar verdadero positivo</button>
+            <button class="secondary-button action-button" type="button" data-action="Marcar falso positivo">Marcar falso positivo</button>
+            <button class="secondary-button action-button" type="button" data-action="Corregir clasificación">Corregir clasificación</button>
+            <button class="warning-button action-button" type="button" data-action="Escalar a supervisor">Escalar a supervisor</button>
+            <button class="ghost-button action-button" type="button" data-action="Deshacer última acción">Deshacer</button>
+          </div>
+        </section>
+
+        <section class="panel audit-panel" aria-labelledby="audit-title">
+          <div class="panel-heading">
+            <h2 id="audit-title">Línea de tiempo auditable</h2>
+            <span>Modelo, evidencia y actor</span>
+          </div>
+          <ol id="audit-timeline" class="timeline" aria-live="polite">
+            <li><time>10:42</time><div><strong>Alerta generada</strong><span>Regla R-SSH-005 v3 · IF-v4 · XGB-v3</span></div></li>
+            <li><time>10:45</time><div><strong>Asignada a Ana C.</strong><span>Acción humana registrada</span></div></li>
+            <li><time>10:51</time><div><strong>Investigación iniciada</strong><span>Evidencia consultada</span></div></li>
+          </ol>
+        </section>
+      </section>
+
+      <section class="view" data-view="rag" aria-labelledby="rag-title" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Eventos / consulta semántica</p>
+            <h1 id="rag-title" tabindex="-1">Consulta de evidencias con RAG</h1>
+            <p>La respuesta cita entidades de SDATR y declara sus límites.</p>
+          </div>
+          <span class="synthetic-chip"><span class="ai-label">IA</span> Asistente sintético</span>
+        </div>
+
+        <form id="rag-form" class="rag-search">
+          <label for="rag-query">Pregunta del analista</label>
+          <div>
+            <input id="rag-query" type="search" value="¿Por qué se generaron las alertas SSH repetidas de la IP 10.0.1.24?">
+            <button class="primary-button" type="submit">Consultar evidencias</button>
+          </div>
+        </form>
+
+        <div class="rag-layout">
+          <article class="panel rag-answer" aria-labelledby="rag-answer-title">
+            <div class="panel-heading">
+              <div>
+                <span class="ai-label">IA</span>
+                <h2 id="rag-answer-title">Respuesta generada por IA</h2>
+              </div>
+              <span id="rag-status">Índice actualizado 24/11/2026 10:30</span>
+            </div>
+            <div id="rag-answer-content" aria-live="polite">
+              <p>Se detectaron <strong>18 intentos SSH denegados</strong> desde la IP <strong>10.0.1.24</strong> durante una ventana de cinco minutos.</p>
+              <p>La regla <strong>R-SSH-005 v3</strong> coincidió y el comportamiento obtuvo un puntaje de anomalía de <strong>0,92</strong>. XGBoost lo clasificó como posible fuerza bruta con <strong>88 %</strong> de probabilidad.</p>
+              <p>La evidencia apoya una revisión prioritaria; no confirma por sí sola un incidente.</p>
+            </div>
+            <div class="rag-limit">
+              <strong>Transparencia:</strong> si faltan fuentes, SDATR debe responder “evidencia insuficiente” en lugar de completar información.
+            </div>
+            <div class="feedback-actions" aria-label="Evaluar respuesta">
+              <button class="secondary-button feedback-button" type="button" data-feedback="Útil">Útil</button>
+              <button class="secondary-button feedback-button" type="button" data-feedback="Reportar error">Reportar error</button>
+              <button class="warning-button action-button" type="button" data-action="Escalar respuesta RAG">Escalar</button>
+            </div>
+          </article>
+
+          <aside class="panel sources-panel" aria-labelledby="sources-title">
+            <div class="panel-heading">
+              <h2 id="sources-title">Fuentes consultadas</h2>
+              <span>3 evidencias</span>
+            </div>
+            <ol class="source-cards">
+              <li>
+                <button type="button" data-evidence="alert">
+                  <strong>[1] Alerta ALT-1048</strong>
+                  <span>Abrir alerta y estado</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" data-evidence="event">
+                  <strong>[2] Evento EVT-7F32A9</strong>
+                  <span>Ver tráfico original</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" data-evidence="rule">
+                  <strong>[3] Regla R-SSH-005 v3</strong>
+                  <span>Consultar criterio aplicado</span>
+                </button>
+              </li>
+            </ol>
+            <div class="source-meta">
+              <span>Modelo: rag-sdatr-v1</span>
+              <span>Índice: semantic-2026-11-24</span>
+              <span>Permisos: ANALYST</span>
+            </div>
+          </aside>
+        </div>
+
+        <div class="audit-notice">
+          <strong>Auditoría reconstruible:</strong> se conservarían consulta, usuario, filtros, fragmentos, versiones, respuesta exacta, citas mostradas y decisión posterior.
+        </div>
+      </section>
+
+      <section class="view" data-view="governance" aria-labelledby="governance-title" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Diseño responsable / criterios</p>
+            <h1 id="governance-title" tabindex="-1">Gobernanza del diálogo y responsabilidad</h1>
+            <p>Decisiones éticas visibles que orientan las tres pantallas del prototipo.</p>
+          </div>
+          <span class="human-label">Humano responsable</span>
+        </div>
+
+        <div class="governance-grid">
+          <article class="governance-card">
+            <span class="governance-icon" aria-hidden="true">IA</span>
+            <h2>Identidad</h2>
+            <p>Asistente técnico identificado como IA, sin nombre humano, rostro o emociones simuladas.</p>
+          </article>
+          <article class="governance-card">
+            <span class="governance-icon" aria-hidden="true">T</span>
+            <h2>Tono</h2>
+            <p>Claro, preciso, neutral y no alarmista. Distingue evidencia, inferencia y sugerencia.</p>
+          </article>
+          <article class="governance-card">
+            <span class="governance-icon" aria-hidden="true">P</span>
+            <h2>Proactividad</h2>
+            <p>Sugiere prioridad y evidencia. No asigna, cierra, modifica reglas ni actúa sobre dispositivos.</p>
+          </article>
+          <article class="governance-card">
+            <span class="governance-icon" aria-hidden="true">H</span>
+            <h2>Control humano</h2>
+            <p>Aplicar, rechazar, corregir, deshacer, restablecer y escalar permanecen disponibles.</p>
+          </article>
+        </div>
+
+        <div class="message-comparison">
+          <article class="message-example accepted">
+            <h2>Mensaje apropiado</h2>
+            <blockquote>“Sugerencia generada por IA: revise primero esta alerta porque combina una regla crítica con comportamiento anómalo.”</blockquote>
+          </article>
+          <article class="message-example rejected">
+            <h2>Mensajes rechazados</h2>
+            <ul>
+              <li>“Estoy preocupado por esta amenaza.”</li>
+              <li>“Confía en mí, este evento es malicioso.”</li>
+              <li>“Entiendo cómo te sientes.”</li>
+            </ul>
+          </article>
+        </div>
+
+        <section class="panel governance-section" aria-labelledby="xai-levels-title">
+          <div class="panel-heading">
+            <h2 id="xai-levels-title">Explicación progresiva</h2>
+            <span>Menor carga cognitiva, mayor trazabilidad</span>
+          </div>
+          <div class="level-grid">
+            <article><strong>Nivel 1 · Resumen</strong><p>Riesgo, causa principal, recomendación y advertencia.</p></article>
+            <article><strong>Nivel 2 · Señales</strong><p>Regla, anomalía, clase, probabilidad, contribución y límites.</p></article>
+            <article><strong>Nivel 3 · Evidencia</strong><p>Eventos, IP, puerto, ventana, reglas/versiones y registros originales.</p></article>
+          </div>
+        </section>
+
+        <section class="panel governance-section" aria-labelledby="test-title">
+          <div class="panel-heading">
+            <h2 id="test-title">Preparación para la evaluación con usuarios</h2>
+            <span>Fase 5 · cinco personas reales</span>
+          </div>
+          <div class="test-grid">
+            <div><strong>Objetivos verificables</strong><p>Priorizar, interpretar XAI, verificar fuentes, contradecir y escalar.</p></div>
+            <div><strong>Preguntas neutrales</strong><p>“¿Qué entiende que ocurrió?” y “¿qué haría si no está de acuerdo?”.</p></div>
+            <div><strong>Métricas</strong><p>Cumplimiento, tiempo, errores, retrocesos, ayuda, SEQ y comprensión.</p></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <dialog id="action-dialog" aria-labelledby="action-dialog-title">
+    <form method="dialog" id="action-form">
+      <div class="dialog-heading">
+        <div>
+          <span class="human-label">Decisión humana</span>
+          <h2 id="action-dialog-title">Registrar acción</h2>
+        </div>
+        <button class="icon-button" value="cancel" aria-label="Cerrar">×</button>
+      </div>
+      <p id="action-description">La acción y su justificación quedarán visibles en la auditoría demostrativa.</p>
+      <label for="action-reason">Motivo o evidencia considerada</label>
+      <textarea id="action-reason" rows="4" required placeholder="Describa brevemente la razón..."></textarea>
+      <div class="dialog-actions">
+        <button class="ghost-button" value="cancel">Cancelar</button>
+        <button class="primary-button" id="confirm-action" value="default">Registrar decisión</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="evidence-dialog" aria-labelledby="evidence-dialog-title">
+    <form method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="evidence-label">Fuente trazable</span>
+          <h2 id="evidence-dialog-title">Evidencia</h2>
+        </div>
+        <button class="icon-button" value="cancel" aria-label="Cerrar">×</button>
+      </div>
+      <div id="evidence-content"></div>
+      <div class="dialog-actions">
+        <button class="primary-button" value="cancel">Cerrar evidencia</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
