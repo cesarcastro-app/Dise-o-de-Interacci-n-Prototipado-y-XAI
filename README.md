@@ -4,6 +4,12 @@ Este directorio contiene un prototipo estático y navegable de las funciones pro
 
 No es una API, no consulta bases de datos y no contiene información real. Todos los eventos, IP, usuarios, reglas y métricas son ficticios y se incluyen únicamente para demostrar interacción, explicabilidad y responsabilidad humana.
 
+## Acceso directo al prototipo
+
+El prototipo puede consultarse en línea mediante GitHub Pages:
+
+**[Abrir prototipo navegable de SDATR](https://cesarcastro-app.github.io/Dise-o-de-Interacci-n-Prototipado-y-XAI/)**
+
 ## Contenido visual
 
 - Bandeja inteligente y accesible de alertas.
