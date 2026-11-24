@@ -477,13 +477,13 @@
           <span class="human-label">Decisión humana</span>
           <h2 id="action-dialog-title">Registrar acción</h2>
         </div>
-        <button class="icon-button" type="button" data-dialog-close aria-label="Cerrar">×</button>
+        <button class="icon-button" type="submit" value="cancel" formnovalidate data-dialog-close aria-label="Cerrar">×</button>
       </div>
       <p id="action-description">La acción y su justificación quedarán visibles en la auditoría demostrativa.</p>
       <label for="action-reason">Motivo o evidencia considerada</label>
       <textarea id="action-reason" rows="4" required placeholder="Describa brevemente la razón..."></textarea>
       <div class="dialog-actions">
-        <button class="ghost-button" type="button" data-dialog-close>Cancelar</button>
+        <button class="ghost-button" type="submit" value="cancel" formnovalidate data-dialog-close>Cancelar</button>
         <button class="primary-button" id="confirm-action" type="submit" value="default">Registrar decisión</button>
       </div>
     </form>
@@ -496,16 +496,16 @@
           <span class="evidence-label">Fuente trazable</span>
           <h2 id="evidence-dialog-title">Evidencia</h2>
         </div>
-        <button class="icon-button" type="button" data-dialog-close aria-label="Cerrar">×</button>
+        <button class="icon-button" type="submit" value="cancel" formnovalidate data-dialog-close aria-label="Cerrar">×</button>
       </div>
       <div id="evidence-content"></div>
       <div class="dialog-actions">
-        <button class="primary-button" type="button" data-dialog-close>Cerrar evidencia</button>
+        <button class="primary-button" type="submit" value="cancel" formnovalidate data-dialog-close>Cerrar evidencia</button>
       </div>
     </form>
   </dialog>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
 

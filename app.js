@@ -135,7 +135,8 @@ const evidenceContent = document.getElementById("evidence-content");
 // Los cierres son botones normales y no envíos de formulario. Esto evita que
 // la validación de campos obligatorios impida cancelar una decisión.
 document.querySelectorAll("[data-dialog-close]").forEach((button) => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
     const dialog = button.closest("dialog");
     if (dialog?.open) dialog.close("cancel");
   });
