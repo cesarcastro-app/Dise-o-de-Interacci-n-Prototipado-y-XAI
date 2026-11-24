@@ -47,16 +47,37 @@ if (!window.location.hash || !validRoutes.has(window.location.hash.slice(1))) {
   renderRoute();
 }
 
+// Cada preferencia se aplica en el elemento donde sus variables CSS pueden
+// propagarse correctamente. El tamaño del texto debe cambiar desde <html>
+// porque la interfaz utiliza unidades rem; densidad y contraste viven en body.
 const preferenceButtons = [
-  ["density-toggle", "comfortable", "Vista compacta", "Vista cómoda"],
-  ["font-toggle", "large-text", "Texto normal", "Texto grande"],
-  ["contrast-toggle", "high-contrast", "Contraste normal", "Alto contraste"],
+  {
+    buttonId: "density-toggle",
+    className: "comfortable",
+    target: document.body,
+    activeLabel: "Vista compacta",
+    inactiveLabel: "Vista cómoda",
+  },
+  {
+    buttonId: "font-toggle",
+    className: "large-text",
+    target: document.documentElement,
+    activeLabel: "Texto normal",
+    inactiveLabel: "Texto grande",
+  },
+  {
+    buttonId: "contrast-toggle",
+    className: "high-contrast",
+    target: document.body,
+    activeLabel: "Contraste normal",
+    inactiveLabel: "Alto contraste",
+  },
 ];
 
-preferenceButtons.forEach(([buttonId, className, activeLabel, inactiveLabel]) => {
+preferenceButtons.forEach(({ buttonId, className, target, activeLabel, inactiveLabel }) => {
   const button = document.getElementById(buttonId);
   button.addEventListener("click", () => {
-    const active = document.body.classList.toggle(className);
+    const active = target.classList.toggle(className);
     button.setAttribute("aria-pressed", String(active));
     button.textContent = active ? activeLabel : inactiveLabel;
     showToast(active ? `${inactiveLabel} activado.` : `${activeLabel} restaurado.`);

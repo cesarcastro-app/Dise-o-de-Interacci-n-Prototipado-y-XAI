@@ -976,16 +976,58 @@ dialog form {
   margin-top: 1rem;
 }
 
-body.comfortable .summary-card,
-body.comfortable .panel,
-body.comfortable td,
-body.comfortable th {
-  padding-top: 1.1rem;
-  padding-bottom: 1.1rem;
+/* La vista cómoda aumenta de forma perceptible el espacio de lectura y los
+   objetivos interactivos, sin ocultar información ni cambiar la navegación. */
+body.comfortable .main-content {
+  padding: clamp(1.5rem, 3.2vw, 3rem);
 }
 
-body.large-text {
-  --font-scale: 1.125;
+body.comfortable .nav-link {
+  min-height: 4rem;
+  padding-block: 0.85rem;
+}
+
+body.comfortable .summary-grid,
+body.comfortable .alerts-layout,
+body.comfortable .detail-grid,
+body.comfortable .rag-layout,
+body.comfortable .governance-grid {
+  gap: 1.25rem;
+}
+
+body.comfortable .summary-grid {
+  margin-block: 1.5rem;
+}
+
+body.comfortable .summary-card {
+  min-height: 9rem;
+  padding: 1.25rem 1.35rem;
+}
+
+body.comfortable .filter-bar,
+body.comfortable .rag-search {
+  gap: 1.1rem;
+  padding: 1.25rem;
+}
+
+body.comfortable .panel-heading,
+body.comfortable .table-panel .panel-heading {
+  padding: 1.1rem 1.25rem;
+}
+
+body.comfortable td,
+body.comfortable th {
+  padding: 1.15rem 1rem;
+}
+
+body.comfortable .decision-actions,
+body.comfortable .feedback-actions {
+  gap: 1rem;
+}
+
+/* El escalado se define en el elemento raíz para que afecte todos los rem. */
+html.large-text {
+  --font-scale: 1.2;
 }
 
 body.high-contrast {
